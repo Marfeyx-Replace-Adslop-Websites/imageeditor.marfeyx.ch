@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Button, Chip, Tooltip } from "@heroui/react";
+import { Aperture, ArrowDownToLine, Brush, Check, Crop, Download, Eraser, FileImage, ImagePlus, LockKeyhole, MousePointer2, Redo2, Search, ShieldCheck, Shapes, SlidersHorizontal, Sparkles, Type, Undo2, Upload, ZoomIn } from "lucide-react";
 import * as fabric from "fabric";
 import * as UTIF from "utif";
 
@@ -12,7 +14,7 @@ type StickerResult = {
   symbol: string;
 };
 
-const contactEmail = "contact.marfeyx@gmail.com";
+const contactEmail = "dev@marfeyx.ch";
 const acceptedTypes =
   "image/png,image/jpeg,image/webp,image/gif,image/bmp,image/svg+xml,image/avif,image/tiff,.tif,.tiff";
 const stickerCatalog = [
@@ -147,6 +149,7 @@ export default function App() {
   );
 
   useEffect(() => {
+    document.title = "Atelier — Private Image Editor";
     if (!canvasElementRef.current) return;
 
     const canvas = new fabric.Canvas(canvasElementRef.current, {
@@ -298,6 +301,7 @@ export default function App() {
       canvas.setDimensions({ width, height });
       setCanvasWidth(width);
       setCanvasHeight(height);
+      if (window.innerWidth <= 900) setZoom(clamp((window.innerWidth - 44) / width, 0.2, 1));
       image.set({
         left: 0,
         top: 0,
@@ -701,28 +705,23 @@ export default function App() {
 
   return (
     <>
-      <div className="mobile-disabled">
-        <div className="mobile-disabled-card">
-          <p className="eyebrow">Desktop editor</p>
-          <h1>Open Web Image Editor on a wider screen.</h1>
-          <p>The editing canvas and side panels need desktop space to keep tools usable.</p>
+      <header className="studio-header">
+        <a className="studio-brand" href="./" aria-label="Atelier image editor home"><span className="studio-mark"><Aperture size={19} /></span><span><strong>atelier</strong><small>/image studio</small></span></a>
+        <div className="document-state"><span className={hasImage ? "state-dot is-ready" : "state-dot"} /><div><strong>{hasImage ? activeObjectLabel : "Untitled canvas"}</strong><small>{canvasWidth} × {canvasHeight}px · {Math.round(zoom * 100)}%</small></div></div>
+        <div className="header-actions">
+          <Chip color="success" variant="soft" size="sm"><ShieldCheck size={13} /> Local only</Chip>
+          <Tooltip><Tooltip.Trigger><Button isIconOnly variant="secondary" size="sm" aria-label="Open image" onPress={() => fileInputRef.current?.click()}><Upload size={16} /></Button></Tooltip.Trigger><Tooltip.Content>Open image</Tooltip.Content></Tooltip>
+          <Button className="export-button" variant="primary" size="sm" isDisabled={!hasImage} onPress={exportImage}><ArrowDownToLine size={15} /> Export</Button>
         </div>
-      </div>
+      </header>
 
       <main className="app-shell">
         <aside className="control-panel left-panel">
-          <div>
-            <p className="eyebrow">Private browser editor</p>
-            <h1>Web Image Editor</h1>
-          </div>
+          <div className="panel-heading"><p className="eyebrow">Creative toolkit</p><h1>Build your composition</h1><p>Everything you need, nothing in the way.</p></div>
           {error ? <p className="error-message">{error}</p> : null}
 
           <>
-            <button className="file-drop" type="button" onClick={() => fileInputRef.current?.click()}>
-              <span className="file-icon">+</span>
-              <span>Open or drop image file</span>
-              <small>PNG, JPEG, WebP, GIF, BMP, SVG, AVIF, TIFF</small>
-            </button>
+            <button className="file-drop" type="button" onClick={() => fileInputRef.current?.click()}><span className="file-icon"><ImagePlus size={21} /></span><span>Open an image</span><small>Drop here or browse · PNG, JPEG, WebP, SVG, AVIF, TIFF</small></button>
             <input
               ref={fileInputRef}
               className="hidden-file-input"
@@ -733,18 +732,18 @@ export default function App() {
           </>
 
           <section className="tool-section">
-            <h2>Tools</h2>
+            <div className="section-heading"><MousePointer2 size={15} /><h2>Tools</h2><span>01</span></div>
             <div className="segmented">
               {(["select", "draw", "erase", "crop"] as ToolMode[]).map((tool) => (
                 <button key={tool} type="button" className={toolMode === tool ? "active" : ""} onClick={() => setTool(tool)}>
-                  {tool}
+                  {tool === "select" ? <MousePointer2 size={14} /> : tool === "draw" ? <Brush size={14} /> : tool === "erase" ? <Eraser size={14} /> : <Crop size={14} />}{tool}
                 </button>
               ))}
             </div>
           </section>
 
           <section className="tool-section">
-            <h2>Paint</h2>
+            <div className="section-heading"><Brush size={15} /><h2>Paint</h2><span>02</span></div>
             <label className="field">
               Color
               <input type="color" value={brushColor} onChange={(event) => setBrushColor(event.target.value)} />
@@ -756,10 +755,8 @@ export default function App() {
           </section>
 
           <section className="tool-section">
-            <h2>Add</h2>
-            <button type="button" onClick={addText} >
-              Text
-            </button>
+            <div className="section-heading"><Shapes size={15} /><h2>Elements</h2><span>03</span></div>
+            <button className="wide-action" type="button" onClick={addText}><Type size={14} /> Add text</button>
             <div className="shape-grid">
               {(["rect", "circle", "line", "arrow", "star", "speech"] as ShapeKind[]).map((shape) => (
                 <button
@@ -788,7 +785,7 @@ export default function App() {
           </section>
 
           <section className="tool-section">
-            <h2>Text Style</h2>
+            <div className="section-heading"><Type size={15} /><h2>Typography</h2><span>04</span></div>
             <label className="field">
               Font
               <select value={fontFamily} onChange={(event) => setFontFamily(event.target.value)}>
@@ -817,46 +814,37 @@ export default function App() {
         >
           <div className="stage-toolbar">
             <div className="stage-info">
-              <span>{canvasWidth} x {canvasHeight}px</span>
+              <span className="stage-kicker">Canvas</span><span>{canvasWidth} × {canvasHeight}px</span>
               {activeObjectLabel !== "No selection" ? <strong>{activeObjectLabel}</strong> : null}
               {status ? <span>{status}</span> : null}
             </div>
             <div className="toolbar-actions">
               {toolMode === "crop" ? (
                 <div className="crop-actions" aria-label="Crop actions">
-                  <button type="button" onClick={applyCrop} disabled={!hasCropSelection}>
-                    Apply crop
-                  </button>
-                  <button type="button" onClick={() => setTool("select")}>
-                    Cancel
-                  </button>
+                  <Button variant="primary" size="sm" onPress={applyCrop} isDisabled={!hasCropSelection}><Check size={14} /> Apply crop</Button>
+                  <Button variant="secondary" size="sm" onPress={() => setTool("select")}>Cancel</Button>
                 </div>
               ) : null}
-              <button type="button" onClick={undo}>
-                Undo
-              </button>
-              <button type="button" onClick={redo}>
-                Redo
-              </button>
-              <label>
-                Zoom {Math.round(zoom * 100)}%
+              <Tooltip><Tooltip.Trigger><Button isIconOnly variant="ghost" size="sm" aria-label="Undo" onPress={undo}><Undo2 size={16} /></Button></Tooltip.Trigger><Tooltip.Content>Undo · Ctrl Z</Tooltip.Content></Tooltip>
+              <Tooltip><Tooltip.Trigger><Button isIconOnly variant="ghost" size="sm" aria-label="Redo" onPress={redo}><Redo2 size={16} /></Button></Tooltip.Trigger><Tooltip.Content>Redo · Ctrl Y</Tooltip.Content></Tooltip>
+              <label className="zoom-control"><ZoomIn size={14} /><span>{Math.round(zoom * 100)}%</span>
                 <input type="range" min="0.2" max="1.5" step="0.02" value={zoom} onChange={(event) => setZoom(Number(event.target.value))} />
               </label>
-              <button type="button" onClick={() => setZoom(1)} title="Reset zoom to 100%">
-                1:1
-              </button>
+              <Button variant="secondary" size="sm" onPress={() => setZoom(1)}>1:1</Button>
             </div>
           </div>
           <div className="canvas-scroll">
-            <div className="canvas-frame" style={canvasStyle}>
+            {!hasImage && <div className="empty-canvas"><span><FileImage size={28} /></span><Chip color="success" variant="soft" size="sm">Private workspace</Chip><h2>Your canvas, ready.</h2><p>Drop an image anywhere in the studio or choose a file to start creating.</p><Button variant="primary" size="lg" onPress={() => fileInputRef.current?.click()}><ImagePlus size={17} /> Choose an image</Button><small><LockKeyhole size={12} /> Files never leave this device</small></div>}
+            <div className={`canvas-frame ${hasImage ? "has-image" : "is-empty"}`} style={canvasStyle}>
               <canvas ref={canvasElementRef} />
             </div>
           </div>
         </section>
 
         <aside className="control-panel right-panel">
+          <div className="panel-heading"><p className="eyebrow">Inspector</p><h1>Refine your image</h1><p>Precision controls for the final details.</p></div>
           <section className="tool-section">
-            <h2>Resolution</h2>
+            <div className="section-heading"><FileImage size={15} /><h2>Dimensions</h2><span>01</span></div>
             <div className="size-grid">
               <label className="field">
                 Width
@@ -881,7 +869,7 @@ export default function App() {
           </section>
 
           <section className="tool-section">
-            <h2>Selection</h2>
+            <div className="section-heading"><MousePointer2 size={15} /><h2>Selection</h2><span>02</span></div>
             <div className="button-row">
               <button type="button" onClick={duplicateSelection}>
                 Duplicate
@@ -921,7 +909,7 @@ export default function App() {
           </section>
 
           <section className="tool-section">
-            <h2>Image Adjustments</h2>
+            <div className="section-heading"><SlidersHorizontal size={15} /><h2>Adjustments</h2><span>03</span></div>
             <AdjustmentSlider label="Brightness" value={adjustments.brightness} min={-100} max={100} onChange={(value) => setAdjustments({ ...adjustments, brightness: value })} />
             <AdjustmentSlider label="Contrast" value={adjustments.contrast} min={-100} max={100} onChange={(value) => setAdjustments({ ...adjustments, contrast: value })} />
             <AdjustmentSlider label="Saturation" value={adjustments.saturation} min={-100} max={100} onChange={(value) => setAdjustments({ ...adjustments, saturation: value })} />
@@ -941,7 +929,7 @@ export default function App() {
           </section>
 
           <section className="tool-section">
-            <h2>Emoji Stickers</h2>
+            <div className="section-heading"><Sparkles size={15} /><h2>Stickers</h2><span>04</span></div>
             <div className="search-row">
               <input
                 value={stickerQuery}
@@ -953,9 +941,7 @@ export default function App() {
                 }}
                 onKeyDown={(event) => (event.key === "Enter" ? searchStickers() : null)}
               />
-              <button type="button" onClick={searchStickers} disabled={isSearchingStickers}>
-                Search
-              </button>
+              <Button isIconOnly variant="secondary" size="sm" aria-label="Search stickers" onPress={searchStickers} isDisabled={isSearchingStickers}><Search size={15} /></Button>
             </div>
             {stickerError ? <p className="inline-error">{stickerError}</p> : null}
             <div className="sticker-grid">
@@ -969,7 +955,7 @@ export default function App() {
           </section>
 
           <section className="tool-section">
-            <h2>Download</h2>
+            <div className="section-heading"><Download size={15} /><h2>Export</h2><span>05</span></div>
             <label className="field">
               Format
               <select value={exportFormat} onChange={(event) => setExportFormat(event.target.value as ExportFormat)}>
@@ -987,13 +973,11 @@ export default function App() {
               Scale <span>{exportScale}x</span>
               <input type="range" min="0.25" max="4" step="0.25" value={exportScale} onChange={(event) => setExportScale(Number(event.target.value))} />
             </label>
-            <button className="primary-action" type="button" onClick={exportImage} disabled={!hasImage}>
-              Download image
-            </button>
+            <Button className="primary-action" variant="primary" size="lg" onPress={exportImage} isDisabled={!hasImage}><Download size={16} /> Download image</Button>
           </section>
 
           <footer className="footer-links">
-            <div className="privacy-note">Images and stickers stay in this browser. No account or API key is required.</div>
+            <div className="privacy-note"><ShieldCheck size={15} /><span><strong>On-device by design</strong>Images and stickers stay in this browser.</span></div>
             <a href="privacy.html">Privacy Policy</a>
             <a href={`mailto:${contactEmail}?subject=Web%20Image%20Editor%20Issue`}>Report issues</a>
             

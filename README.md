@@ -1,8 +1,8 @@
-# Web Image Editor
+# Atelier Image Studio
 
-A private, browser-based image editor. All editing happens locally: no server uploads, accounts, API keys, or sticker CDN requests.
+A premium, private browser-based image editor. All editing happens locally: no server uploads, accounts, API keys, or sticker CDN requests.
 
-Built with React, TypeScript, Vite, and [Fabric.js](http://fabricjs.com/).
+Built with React, TypeScript, Vite, Fabric.js, HeroUI 3, and Tailwind CSS 4.
 
 ## Features
 
@@ -14,6 +14,7 @@ Built with React, TypeScript, Vite, and [Fabric.js](http://fabricjs.com/).
 - Keyboard shortcuts: Ctrl+Z undo, Ctrl+Y redo, Delete to remove selection
 - Drag-and-drop file opening
 - Undo / redo history
+- Responsive editing workspace with automatic canvas fitting on smaller screens
 
 ## Local Development
 
@@ -30,7 +31,7 @@ npm run build
 
 ## Deployment
 
-Deploys automatically to GitHub Pages on push to `main` via the included GitHub Actions workflow.
+Deploys automatically to GitHub Pages on push to `main` via the included GitHub Actions workflow. Vite uses relative asset paths, and `public/CNAME` preserves `imageeditor.marfeyx.ch` in the deployment artifact.
 
 ## License
 
