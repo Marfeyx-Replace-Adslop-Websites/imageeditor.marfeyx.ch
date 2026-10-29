@@ -1,3 +1,4 @@
+import { MarfeyxBrand } from "./brand/MarfeyxBrand";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Chip, Tooltip } from "@heroui/react";
 import { Aperture, ArrowDownToLine, Brush, Check, Crop, Download, Eraser, FileImage, ImagePlus, LockKeyhole, MousePointer2, Redo2, Search, ShieldCheck, Shapes, SlidersHorizontal, Sparkles, Type, Undo2, Upload, ZoomIn } from "lucide-react";
@@ -149,7 +150,7 @@ export default function App() {
   );
 
   useEffect(() => {
-    document.title = "Atelier — Private Image Editor";
+    document.title = "Image Editor — Marfeyx";
     if (!canvasElementRef.current) return;
 
     const canvas = new fabric.Canvas(canvasElementRef.current, {
@@ -706,7 +707,7 @@ export default function App() {
   return (
     <>
       <header className="studio-header">
-        <a className="studio-brand" href="./" aria-label="Atelier image editor home"><span className="studio-mark"><Aperture size={19} /></span><span><strong>atelier</strong><small>/image studio</small></span></a>
+        <MarfeyxBrand product="Image Editor" />
         <div className="document-state"><span className={hasImage ? "state-dot is-ready" : "state-dot"} /><div><strong>{hasImage ? activeObjectLabel : "Untitled canvas"}</strong><small>{canvasWidth} × {canvasHeight}px · {Math.round(zoom * 100)}%</small></div></div>
         <div className="header-actions">
           <Chip color="success" variant="soft" size="sm"><ShieldCheck size={13} /> Local only</Chip>
