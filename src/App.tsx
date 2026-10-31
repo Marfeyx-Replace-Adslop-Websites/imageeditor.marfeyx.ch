@@ -711,14 +711,14 @@ export default function App() {
         <div className="document-state"><span className={hasImage ? "state-dot is-ready" : "state-dot"} /><div><strong>{hasImage ? activeObjectLabel : "Untitled canvas"}</strong><small>{canvasWidth} × {canvasHeight}px · {Math.round(zoom * 100)}%</small></div></div>
         <div className="header-actions">
           <Chip color="success" variant="soft" size="sm"><ShieldCheck size={13} /> Local only</Chip>
-          <Tooltip><Tooltip.Trigger><Button isIconOnly variant="secondary" size="sm" aria-label="Open image" onPress={() => fileInputRef.current?.click()}><Upload size={16} /></Button></Tooltip.Trigger><Tooltip.Content>Open image</Tooltip.Content></Tooltip>
+          <Tooltip><Button isIconOnly variant="secondary" size="sm" aria-label="Open image" onPress={() => fileInputRef.current?.click()}><Upload size={16} /></Button><Tooltip.Content>Open image</Tooltip.Content></Tooltip>
           <Button className="export-button" variant="primary" size="sm" isDisabled={!hasImage} onPress={exportImage}><ArrowDownToLine size={15} /> Export</Button>
         </div>
       </header>
 
       <main className="app-shell">
         <aside className="control-panel left-panel">
-          <div className="panel-heading"><p className="eyebrow">Creative toolkit</p><h1>Build your composition</h1><p>Everything you need, nothing in the way.</p></div>
+          <div className="panel-heading"><p className="eyebrow">Creative toolkit</p><h1>Image Editor</h1><p>Choose a tool. Make it yours.</p></div>
           {error ? <p className="error-message">{error}</p> : null}
 
           <>
@@ -826,8 +826,8 @@ export default function App() {
                   <Button variant="secondary" size="sm" onPress={() => setTool("select")}>Cancel</Button>
                 </div>
               ) : null}
-              <Tooltip><Tooltip.Trigger><Button isIconOnly variant="ghost" size="sm" aria-label="Undo" onPress={undo}><Undo2 size={16} /></Button></Tooltip.Trigger><Tooltip.Content>Undo · Ctrl Z</Tooltip.Content></Tooltip>
-              <Tooltip><Tooltip.Trigger><Button isIconOnly variant="ghost" size="sm" aria-label="Redo" onPress={redo}><Redo2 size={16} /></Button></Tooltip.Trigger><Tooltip.Content>Redo · Ctrl Y</Tooltip.Content></Tooltip>
+              <Tooltip><Button isIconOnly variant="ghost" size="sm" aria-label="Undo" onPress={undo}><Undo2 size={16} /></Button><Tooltip.Content>Undo · Ctrl Z</Tooltip.Content></Tooltip>
+              <Tooltip><Button isIconOnly variant="ghost" size="sm" aria-label="Redo" onPress={redo}><Redo2 size={16} /></Button><Tooltip.Content>Redo · Ctrl Y</Tooltip.Content></Tooltip>
               <label className="zoom-control"><ZoomIn size={14} /><span>{Math.round(zoom * 100)}%</span>
                 <input type="range" min="0.2" max="1.5" step="0.02" value={zoom} onChange={(event) => setZoom(Number(event.target.value))} />
               </label>
@@ -835,7 +835,7 @@ export default function App() {
             </div>
           </div>
           <div className="canvas-scroll">
-            {!hasImage && <div className="empty-canvas"><span><FileImage size={28} /></span><Chip color="success" variant="soft" size="sm">Private workspace</Chip><h2>Your canvas, ready.</h2><p>Drop an image anywhere in the studio or choose a file to start creating.</p><Button variant="primary" size="lg" onPress={() => fileInputRef.current?.click()}><ImagePlus size={17} /> Choose an image</Button><small><LockKeyhole size={12} /> Files never leave this device</small></div>}
+            {!hasImage && <div className="empty-canvas"><span><FileImage size={28} /></span><Chip color="success" variant="soft" size="sm">Private workspace</Chip><h2>A little room to create.</h2><p>Open an image to crop, compose, draw, and refine. Every edit happens on your device.</p><Button variant="primary" size="lg" onPress={() => fileInputRef.current?.click()}><ImagePlus size={17} /> Choose an image</Button><small><LockKeyhole size={12} /> Files never leave this device</small></div>}
             <div className={`canvas-frame ${hasImage ? "has-image" : "is-empty"}`} style={canvasStyle}>
               <canvas ref={canvasElementRef} />
             </div>
@@ -843,7 +843,7 @@ export default function App() {
         </section>
 
         <aside className="control-panel right-panel">
-          <div className="panel-heading"><p className="eyebrow">Inspector</p><h1>Refine your image</h1><p>Precision controls for the final details.</p></div>
+          <div className="panel-heading"><p className="eyebrow">Inspector</p><h2>Image details</h2><p>Precision controls for the final details.</p></div>
           <section className="tool-section">
             <div className="section-heading"><FileImage size={15} /><h2>Dimensions</h2><span>01</span></div>
             <div className="size-grid">
